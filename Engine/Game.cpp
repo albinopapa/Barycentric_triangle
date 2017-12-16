@@ -20,7 +20,7 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "Vec2.h"
+#include "Vertices.h"
 
 Game::Game( MainWindow& wnd )
 	:
@@ -46,9 +46,10 @@ void Game::ComposeFrame()
 	const float fScrnWidth = static_cast< float >( Graphics::ScreenWidth );
 	const float fScrnHeight = static_cast< float >( Graphics::ScreenHeight );
 
-	Vec2f p0 = { fScrnWidth - 1.f, 0.f };
-	Vec2f p1 = { 0.f, fScrnHeight * .5f };
-	Vec2f p2 = { fScrnWidth - 1.f, fScrnHeight - 1.f };
+	const auto a = Vertex2D_Color{ { fScrnWidth - 1.f, 0.f }, Colors::Green };
+	const auto b = Vertex2D_Color{ { 0.f, fScrnHeight * .5f }, Colors::Yellow };
+	const auto c = Vertex2D_Color{ { fScrnWidth - 1.f, fScrnHeight - 1.f }, Colors::Red };
 
-	gfx.DrawTriangle( p0, p1, p2, Colors::Green, Colors::Yellow, Colors::Red );
+
+	gfx.DrawTriangle( a,b,c );
 }

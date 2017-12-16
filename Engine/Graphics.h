@@ -24,7 +24,7 @@
 #include <wrl.h>
 #include "ChiliException.h"
 #include "Colors.h"
-#include "Vec2.h"
+#include "Vertices.h"
 
 class Graphics
 {
@@ -58,7 +58,7 @@ public:
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
 	void PutPixel( int x,int y,Color c );
-	void DrawTriangle( const Vec2f& P0, const Vec2f& P1, const Vec2f& P2, Color C0, Color C1, Color C2 );
+	void DrawTriangle( const Vertex2D_Color& A, const Vertex2D_Color& B, const Vertex2D_Color& C );
 
 	~Graphics();
 private:

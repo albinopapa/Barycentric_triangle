@@ -1,27 +1,25 @@
 #pragma once
 
-#include "Colors.h"
-#include "Vec2.h"
+#include "Vertices.h"
 
 struct Coordinates
 {
-	Coordinates( const Vec2f& A, const Vec2f& B, const Vec2f& C )
+	Coordinates( const Vertex2D_Color& A, const Vertex2D_Color& B, const Vertex2D_Color& C )
 		:
 		a( A ), b( B ), c( C ),
-		ca( A - C ), ab( B - A ), bc( C - B ),
-		recip_total_area( 1.f / CrossProduct( B - A, C - A ) )
+		ca( A.position - C.position ), ab( B.position - A.position ), bc( C.position - B.position ),
+		recip_total_area( 1.f / ( CrossProduct( B.position - A.position, C.position - A.position ) * .5f ) )
 	{}
 
 	void Calculate( const Vec2f& P )
 	{
-
-		const auto ap = P - a;
-		const auto bp = P - b;
-		const auto cp = P - c;
-
-		const float areaA = ( ca.y * cp.x - ca.x * cp.y ) * .5f;
-		const float areaB = ( ab.y * ap.x - ab.x * ap.y ) * .5f;
-		const float areaC = ( bc.y * bp.x - bc.x * bp.y ) * .5f;
+		const auto ap = P - a.position;
+		const auto bp = P - b.position;
+		const auto cp = P - c.position;		
+		
+		const float areaA = CrossProduct( bc, bp ) * .5f;
+		const float areaB = CrossProduct( ca, cp ) * .5f;
+		const float areaC = CrossProduct( ab, ap ) * .5f;
 
 		u = areaA * recip_total_area;
 		v = areaB * recip_total_area;
@@ -41,18 +39,10 @@ struct Coordinates
 	{
 		return ( Value0 * u ) + ( Value1 * v ) + ( Value2 * w );
 	}
-	template<>
-	Color Interpolate( const Color& Value0, const Color& Value1, const Color& Value2 )
-	{
-		const unsigned char cu = static_cast< unsigned char >( u * 255.f );
-		const unsigned char cv = static_cast< unsigned char >( v * 255.f );
-		const unsigned char cw = static_cast< unsigned char >( w * 255.f );
 
-		return ( Value0 * cu ) + ( Value1 * cv ) + ( Value2 * cw );
-	}
-
-	Vec2f a, b, c;
+	Vertex2D_Color a, b, c;
 	Vec2f ca, ab, bc;
 	float recip_total_area;
 	float u, v, w;
 };
+

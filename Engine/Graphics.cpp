@@ -316,15 +316,15 @@ void Graphics::PutPixel( int x,int y,Color c )
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
 }
 
-void Graphics::DrawTriangle( const Vec2f & A, const Vec2f & B, const Vec2f & C, Color C0, Color C1, Color C2 )
+void Graphics::DrawTriangle( const Vertex2D_Color& A, const Vertex2D_Color& B, const Vertex2D_Color& C )
 {
 	// Calculate the total area of the trinagle
 
 	// Calculate the bounding box around the triangle
-	const int xStart = static_cast<int>( std::min( A.x, std::min( B.x, C.x ) ) );
-	const int yStart = static_cast<int>( std::min( A.y, std::min( B.y, C.y ) ) );
-	const int xEnd = static_cast<int>( std::max( A.x, std::max( B.x, C.x ) ) );
-	const int yEnd = static_cast<int>( std::max( A.y, std::max( B.y, C.y ) ) );
+	const int xStart = static_cast<int>( std::min( A.position.x, std::min( B.position.x, C.position.x ) ) );
+	const int yStart = static_cast<int>( std::min( A.position.y, std::min( B.position.y, C.position.y ) ) );
+	const int xEnd = static_cast<int>( std::max( A.position.x, std::max( B.position.x, C.position.x ) ) );
+	const int yEnd = static_cast<int>( std::max( A.position.y, std::max( B.position.y, C.position.y ) ) );
 
 	Coordinates coords( A, B, C );
 
@@ -341,8 +341,8 @@ void Graphics::DrawTriangle( const Vec2f & A, const Vec2f & B, const Vec2f & C, 
 			// Only show pixels that are in the triangle
 			if( coords.IsInTriangle() )
 			{
-				Color color = coords.Interpolate( C0, C1, C2 );
-				PutPixel( x, y, color );
+				const auto vertex = coords.Interpolate( A, B, C );
+				PutPixel( x, y, vertex.color );
 			}
 		}
 	}
