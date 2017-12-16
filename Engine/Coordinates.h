@@ -56,11 +56,3 @@ struct Coordinates
 	float recip_total_area;
 	float u, v, w;
 };
-
-class Barycentric3D
-{
-public:
-
-private:
-
-};

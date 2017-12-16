@@ -25,7 +25,7 @@
 #include <assert.h>
 #include <string>
 #include <array>
-
+#include "Coordinates.h"
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
 namespace FramebufferShaders
@@ -316,6 +316,37 @@ void Graphics::PutPixel( int x,int y,Color c )
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
 }
 
+void Graphics::DrawTriangle( const Vec2f & A, const Vec2f & B, const Vec2f & C, Color C0, Color C1, Color C2 )
+{
+	// Calculate the total area of the trinagle
+
+	// Calculate the bounding box around the triangle
+	const int xStart = static_cast<int>( std::min( A.x, std::min( B.x, C.x ) ) );
+	const int yStart = static_cast<int>( std::min( A.y, std::min( B.y, C.y ) ) );
+	const int xEnd = static_cast<int>( std::max( A.x, std::max( B.x, C.x ) ) );
+	const int yEnd = static_cast<int>( std::max( A.y, std::max( B.y, C.y ) ) );
+
+	Coordinates coords( A, B, C );
+
+	// Iterate through the bounding box and calculate the barycentric coordinates
+	for( int y = yStart; y < yEnd; ++y )
+	{
+		for( int x = xStart; x < xEnd; ++x )
+		{
+			coords.Calculate( {
+				static_cast< float >( x ),
+				static_cast< float >( y )
+				} );
+
+			// Only show pixels that are in the triangle
+			if( coords.IsInTriangle() )
+			{
+				Color color = coords.Interpolate( C0, C1, C2 );
+				PutPixel( x, y, color );
+			}
+		}
+	}
+}
 
 //////////////////////////////////////////////////
 //           Graphics Exception

@@ -20,16 +20,14 @@
 ******************************************************************************************/
 #pragma once
 
+#include <algorithm>
+
 class Color
 {
 public:
 	unsigned int dword;
 public:
 	constexpr Color() : dword() {}
-	constexpr Color( const Color& col )
-		:
-		dword( col.dword )
-	{}
 	constexpr Color( unsigned int dw )
 		:
 		dword( dw )
@@ -46,11 +44,65 @@ public:
 		:
 		Color( (x << 24u) | col.dword )
 	{}
-	Color& operator =( Color color )
+
+	Color operator+( const Color &C )const
 	{
-		dword = color.dword;
+		return Color( *this ) += C;
+	}
+	Color &operator+=( const Color &C )
+	{
+		const auto srcR = static_cast< short >( GetR() );
+		const auto srcG = static_cast< short >( GetG() );
+		const auto srcB = static_cast< short >( GetB() );
+
+		const auto dstR = static_cast< short >( C.GetR() );
+		const auto dstG = static_cast< short >( C.GetG() );
+		const auto dstB = static_cast< short >( C.GetB() );
+
+		SetR( std::min<unsigned char>( srcR + dstR, 255ui8 ) );
+		SetG( std::min<unsigned char>( srcG + dstG, 255ui8 ) );
+		SetB( std::min<unsigned char>( srcB + dstB, 255ui8 ) );
+
 		return *this;
 	}
+	Color operator-( const Color& C )const
+	{
+		return Color( *this ) -= C;
+	}
+	Color& operator-=( const Color& C )
+	{
+		const auto srcR = static_cast< short >( GetR() );
+		const auto srcG = static_cast< short >( GetG() );
+		const auto srcB = static_cast< short >( GetB() );
+
+		const auto dstR = static_cast< short >( C.GetR() );
+		const auto dstG = static_cast< short >( C.GetG() );
+		const auto dstB = static_cast< short >( C.GetB() );
+
+		SetR( std::max<unsigned char>( srcR - dstR, 0ui8 ) );
+		SetG( std::max<unsigned char>( srcG - dstG, 0ui8 ) );
+		SetB( std::max<unsigned char>( srcB - dstB, 0ui8 ) );
+
+		return *this;
+	}
+	Color operator*( unsigned char S )const
+	{
+		return Color( *this ) *= S;
+	}
+	Color &operator*=( unsigned char S )
+	{
+		const auto s = static_cast< short >( S );
+		const auto srcR = static_cast< short >( GetR() ) * s;
+		const auto srcG = static_cast< short >( GetG() ) * s;
+		const auto srcB = static_cast< short >( GetB() ) * s;
+
+		SetR( static_cast<unsigned char>( srcR >> 8ui8 ) );
+		SetG( static_cast<unsigned char>( srcG >> 8ui8 ) );
+		SetB( static_cast<unsigned char>( srcB >> 8ui8 ) );
+
+		return *this;
+	}
+
 	constexpr unsigned char GetX() const
 	{
 		return dword >> 24u;

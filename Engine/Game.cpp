@@ -20,6 +20,7 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "Vec2.h"
 
 Game::Game( MainWindow& wnd )
 	:
@@ -42,4 +43,12 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+	const float fScrnWidth = static_cast< float >( Graphics::ScreenWidth );
+	const float fScrnHeight = static_cast< float >( Graphics::ScreenHeight );
+
+	Vec2f p0 = { fScrnWidth - 1.f, 0.f };
+	Vec2f p1 = { 0.f, fScrnHeight * .5f };
+	Vec2f p2 = { fScrnWidth - 1.f, fScrnHeight - 1.f };
+
+	gfx.DrawTriangle( p0, p1, p2, Colors::Green, Colors::Yellow, Colors::Red );
 }
